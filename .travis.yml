@@ -48,4 +48,3 @@ deploy:
 after_deploy:
  # execute release after script
  - sh ./vendor/coldtrick/releases/scripts/travis/after_deploy.sh
- 
