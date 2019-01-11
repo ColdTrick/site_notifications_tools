@@ -12,3 +12,12 @@ echo elgg_view_field([
 	'checked' => (bool) $plugin->delete_all,
 	'switch' => true,
 ]);
+
+echo elgg_view_field([
+	'#type' => 'number',
+	'#label' => elgg_echo('site_notifications_tools:settings:retention'),
+	'#help' => elgg_echo('site_notifications_tools:settings:retention:help'),
+	'name' => 'params[retention]',
+	'value' => $plugin->retention,
+	'min' => 0,
+]);
