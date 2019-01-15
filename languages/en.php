@@ -7,6 +7,9 @@ return [
 	'site_notifications_tools:settings:retention' => "Retention period (in days) to keep unread site notifications",
 	'site_notifications_tools:settings:retention:help' => "Unread site notifications will be removed after the configured amount of days. Leave empty for no cleanup.",
 	
+	// generic
+	'site_notifications_tools:delete_all' => "Delete all",
+	
 	// actions
 	// delete_all
 	'site_notifications_tools:action:delete_all:error' => "An error occurred while deleting a site site notification",

@@ -45,7 +45,7 @@ class Title {
 		
 		$result[] = \ElggMenuItem::factory([
 			'name' => 'delete_all',
-			'text' => elgg_echo('delete'),
+			'text' => elgg_echo('site_notifications_tools:delete_all'),
 			'href' => elgg_generate_action_url('site_notifications/delete_all', [
 				'user_guid' => $page_owner->guid,
 			]),
