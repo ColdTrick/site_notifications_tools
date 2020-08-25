@@ -33,8 +33,10 @@ class Cron {
 			
 			// in case of a large backlog don't try to cleanup everything at once
 			// only take 60 sec to cleanup
-			$time_left = 60;
-			set_time_limit(120);
+			$start_time = microtime(true);
+			$max_duration = 60;
+			
+			set_time_limit($max_duration + 10);
 			
 			$site_notifications = elgg_get_entities([
 				'type' => 'object',
@@ -53,8 +55,7 @@ class Cron {
 				$notification->delete();
 				
 				// reduce timer
-				$time_left = $time_left - microtime(true);
-				if ($time_left < 0) {
+				if ((microtime(true) - $start_time) > $max_duration) {
 					// no more time this run
 					break;
 				}
