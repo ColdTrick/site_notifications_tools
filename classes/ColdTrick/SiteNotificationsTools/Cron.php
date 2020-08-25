@@ -4,6 +4,7 @@ namespace ColdTrick\SiteNotificationsTools;
 
 use Elgg\Values;
 use Elgg\Database\Clauses\OrderByClause;
+use Elgg\Database\QueryBuilder;
 
 class Cron {
 	
@@ -47,7 +48,7 @@ class Cron {
 				'batch' => true,
 				'batch_inc_offset' => false,
 			]);
-			/* @var $notification SiteNotification */
+			/* @var $notification \SiteNotification */
 			foreach ($site_notifications as $notification) {
 				$notification->delete();
 				
@@ -62,5 +63,63 @@ class Cron {
 		
 		echo 'Finished Site notifications cleanup' . PHP_EOL;
 		elgg_log('Finished Site notifications cleanup', 'NOTICE');
+	}
+	
+	/**
+	 * Delete all site notifications which have been marked to be deleted
+	 *
+	 * @param \Elgg\Hook $hook 'cron', 'fifteenmin'
+	 *
+	 * @return void
+	 */
+	public static function deleteSiteNotifications(\Elgg\Hook $hook) {
+		
+		echo 'Starting Site notifications deletion' . PHP_EOL;
+		elgg_log('Starting Site notifications deletion', 'NOTICE');
+		
+		elgg_call(ELGG_IGNORE_ACCESS | ELGG_SHOW_DISABLED_ENTITIES, function() {
+			$site_notifications = elgg_get_entities([
+				'type' => 'object',
+				'subtype' => 'site_notification',
+				'limit' => false,
+				'wheres' => [
+					function(QueryBuilder $qb, $main_alias) {
+						// disabled site notifications
+						return $qb->compare("{$main_alias}.enabled", '=', 'no', ELGG_VALUE_STRING);
+					},
+					function(QueryBuilder $qb, $main_alias) {
+						// from enabled users
+						// when a user get disabled and then re-enabled all 'deleted' site notifications return
+						$oe = $qb->joinEntitiesTable($main_alias, 'owner_guid', 'inner', 'oe');
+						
+						return $qb->merge([
+							$qb->compare("{$oe}.type", '=', 'user', ELGG_VALUE_STRING),
+							$qb->compare("{$oe}.enabled", '=', 'yes', ELGG_VALUE_STRING),
+						]);
+					},
+				],
+				'order_by' => new OrderByClause('e.time_created', 'asc'),
+				'batch' => true,
+				'batch_inc_offset' => false,
+			]);
+			
+			$start_time = microtime(true);
+			$max_duration = 300; // five minutes
+			
+			set_time_limit($max_duration + 10);
+			
+			/* @var $notification \SiteNotification */
+			foreach ($site_notifications as $notification) {
+				$notification->delete();
+				
+				if ((microtime(true) - $start_time) > $max_duration) {
+					// max time reached
+					break;
+				}
+			}
+		});
+		
+		echo 'Finished Site notifications deletion' . PHP_EOL;
+		elgg_log('Finished Site notifications deletion', 'NOTICE');
 	}
 }

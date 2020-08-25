@@ -23,6 +23,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 		$hooks = $this->elgg()->hooks;
 		
 		$hooks->registerHandler('cron', 'daily', __NAMESPACE__ . '\Cron::cleanupSiteNotifications');
+		$hooks->registerHandler('cron', 'fifteenmin', __NAMESPACE__ . '\Cron::deleteSiteNotifications');
 		$hooks->registerHandler('register', 'menu:title', __NAMESPACE__ . '\Menus\Title::registerDeleteAll');
 	}
 }
