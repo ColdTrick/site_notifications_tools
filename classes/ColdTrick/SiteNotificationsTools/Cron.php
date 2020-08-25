@@ -32,9 +32,8 @@ class Cron {
 		elgg_call(ELGG_IGNORE_ACCESS, function() use ($working_date) {
 			
 			// in case of a large backlog don't try to cleanup everything at once
-			// only take 60 sec to cleanup
 			$start_time = microtime(true);
-			$max_duration = 60;
+			$max_duration = 300; // 5 minutes
 			
 			set_time_limit($max_duration + 10);
 			
