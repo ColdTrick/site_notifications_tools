@@ -1,6 +1,11 @@
 Version history
 ===============
 
+1.1 (2020-09-01):
+
+- changed: delete all site notifications is offloaded to cron
+- fixed: site notification cleanup used wrong time limiter
+
 1.0 (2019-03-27):
 
 - added: basic plugin structure
